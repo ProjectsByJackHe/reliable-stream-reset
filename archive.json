@@ -1,0 +1,1059 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2023-08-15T00:43:10.857772+00:00",
+  "repo": "quicwg/reliable-stream-reset",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 10,
+      "id": "I_kwDOHuKM_s5kWgYo",
+      "title": "Rename the frame",
+      "url": "https://github.com/quicwg/reliable-stream-reset/issues/10",
+      "state": "CLOSED",
+      "author": "vasilvv",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "As far as I remember, \"reliable reset\" originally referred to the fact that this feature would make WebTransport stream resets reliable.  However, outside of that context, that name does not make that much sense, since QUIC resets are already reliable.",
+      "createdAt": "2023-04-25T18:09:41Z",
+      "updatedAt": "2023-06-21T12:20:48Z",
+      "closedAt": "2023-06-21T12:20:48Z",
+      "comments": [
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As discussed in Yokohama, this is the plan for the next revision of the document.",
+          "createdAt": "2023-04-25T18:57:07Z",
+          "updatedAt": "2023-04-25T18:57:07Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Resolved by #11.",
+          "createdAt": "2023-06-21T12:20:48Z",
+          "updatedAt": "2023-06-21T12:20:48Z"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "I_kwDOHuKM_s5sh16B",
+      "title": "name of the frame",
+      "url": "https://github.com/quicwg/reliable-stream-reset/issues/19",
+      "state": "OPEN",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed at IETF 117, we can either:\r\n* keep CLOSE_STREAM,\r\n* go back to RELIABLE_RESET_STREAM, or\r\n* something else.",
+      "createdAt": "2023-07-25T17:34:05Z",
+      "updatedAt": "2023-07-25T17:46:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "body": "My weak preference goes to retaining CLOSE_STREAM.\r\n\r\nSenders can use this frame in place of FIN, with the additional capability of transmitting an error code.\r\n\r\nWe also know that there were interest in truncating data but not sending an error, it might make sense to point out that the frame can carry a \"NO_ERROR\" error code.\r\n\r\nIf we change the name to \"RELIABLE_RESET_STREAM,\" people might have difficulty in understanding that this frame can be used in such ways, not to mention that the internal semantics of the frame is much close to FIN rather than RESET_STREAM (as the new frame cannot be sent until flow control permits doing so).",
+          "createdAt": "2023-07-25T17:46:44Z",
+          "updatedAt": "2023-07-25T17:46:44Z"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "I_kwDOHuKM_s5srOEt",
+      "title": "Clarify more if it CLOSE_STREAM && RESET_STREAM or CLOSE_STREAM || RESET_STREAM",
+      "url": "https://github.com/quicwg/reliable-stream-reset/issues/20",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "Might just be me, but I read\r\n\r\n> Conceptually, the CLOSE_STREAM frame is a RESET_STREAM frame with an added Reliable Size field.\r\n\r\nAnd was lead down the false path to think it is a direct substitute for RESET_STREAM. However,\r\n\r\n> When resetting a stream, the node has the choice between using a RESET_STREAM frame and a CLOSE_STREAM frame of type 0x21.\r\n\r\nthe and in this sentence threw me off. \r\n\r\nI'm not  exactly sure what is expected. This seems a problem when a peer sends STOP_SENDING and I might be able to reply with either CLOSE_STREAM or RESET_STREAM because these things behave differently. The the peer really needs one type but the sender decides arbitrarily, bad stuff could happen. \r\n\r\nDepending if it is an && or || relationship, we might really need to pull in something like the [ENOUGH frame](https://www.ietf.org/archive/id/draft-thomson-quic-enough-00.html) to make this stuff really separate and unambiguous.",
+      "createdAt": "2023-07-26T22:15:27Z",
+      "updatedAt": "2023-07-26T22:57:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "body": "@LPardue \r\n>> When resetting a stream, the node has the choice between using a RESET_STREAM frame and a CLOSE_STREAM frame of type 0x21.\r\n> \r\n> the and in this sentence threw me off.\r\n\r\nThe sentence is *between \u301c and*, so I think the intent is to state that CLOSE_STREAM frame with Reliable Size of 0 can be sent in place of a RESET_STREAM frame.\r\n\r\nThat said, I think I agree that we have ambiguity around how endpoints could respond to STOP_SENDING. Are they allowed to respond with a CLOSE_STREAM frame with a non-zero Reliable Size?\r\n\r\nI am inclined to say that the answer is no, as that changes the semantics of QUIC v1. If there is interest in having the capability of asking the peer to stop sending after certain offset, then yes we need a new frame for requesting that.\r\n\r\nFinally, honestly I think it might be misleading to state that \"**conceptually**, the CLOSE_STREAM frame is a RESET_STREAM frame with an added Reliable Size field,\" with the reason being that the state machinery of a CLOSE_STREAM frame is much closer to a FIN rather than RESET_STREAM.\r\n\r\nI think it might be a good idea to change \"conceptually\" to something like \"encoding-wise,\" or something.",
+          "createdAt": "2023-07-26T22:51:36Z",
+          "updatedAt": "2023-07-26T22:51:36Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "MEMBER",
+          "body": "> @LPardue\r\n> \r\n> > > When resetting a stream, the node has the choice between using a RESET_STREAM frame and a CLOSE_STREAM frame of type 0x21.\r\n> > \r\n> > \r\n> > the and in this sentence threw me off.\r\n> \r\n> The sentence is _between \u301c and_, so I think the intent is to state that CLOSE_STREAM frame with Reliable Size of 0 can be sent in place of a RESET_STREAM frame.\r\n\r\nIMHO that's an equality for one manifestation of CLOSE_STREAM. That seems fine and we should probably highlight it.\r\n\r\n> \r\n> That said, I think I agree that we have ambiguity around how endpoints could respond to STOP_SENDING. Are they allowed to respond with a CLOSE_STREAM frame with a non-zero Reliable Size?\r\n> \r\n> I am inclined to say that the answer is no, as that changes the semantics of QUIC v1. If there is interest in having the capability of asking the peer to stop sending after certain offset, then yes we need a new frame for requesting that.\r\n\r\nThe RTP over QUIC draft potentially has this problem right now. I think it might be worth serious consideration for including `ENOUGH` (bikeshed on names) in this draft and under a common Transport Param.\r\n\r\n> \r\n> Finally, honestly I think it might be misleading to state that \"**conceptually**, the CLOSE_STREAM frame is a RESET_STREAM frame with an added Reliable Size field,\" with the reason being that the state machinery of a CLOSE_STREAM frame is much closer to a FIN rather than RESET_STREAM.\r\n> \r\n> I think it might be a good idea to change \"conceptually\" to something like \"encoding-wise,\" or something.\r\n\r\nYes, no matter the above outcomes, we can tweak this text as an improvement. Lets spin it off to separate issue?\r\n\r\n",
+          "createdAt": "2023-07-26T22:57:43Z",
+          "updatedAt": "2023-07-26T22:57:43Z"
+        }
+      ]
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOHuKM_s4-sthQ",
+      "title": "Editorial changes",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/1",
+      "state": "MERGED",
+      "author": "hawkinsw",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Just fixing a few typos and proposing some alternate wording in places.",
+      "createdAt": "2022-09-09T18:55:34Z",
+      "updatedAt": "2022-09-10T06:23:28Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "35c858e3d9545e4288f9982634ccaff59fdd219c",
+      "headRepository": "hawkinsw/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "editorial",
+      "headRefOid": "d6597d5430770141e72ebc6326c41a34cff329aa",
+      "closedAt": "2022-09-10T06:23:28Z",
+      "mergedAt": "2022-09-10T06:23:28Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "af90b4962bbc25603fbc8264370231c6b8af1739"
+      },
+      "comments": [
+        {
+          "author": "hawkinsw",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@marten-seemann Thank you for a great proposal. I just saw a few things that I thought maybe I could help fix. I hope it is helpful -- please feel free to ignore if it's not useful!",
+          "createdAt": "2022-09-09T18:56:09Z",
+          "updatedAt": "2022-09-09T18:56:09Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5Bv7T6",
+          "commit": {
+            "abbreviatedOid": "20b7fb7"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thank you @hawkinsw!",
+          "createdAt": "2022-09-10T06:21:09Z",
+          "updatedAt": "2022-09-10T06:21:59Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "This was just copied from the RFC, so I'd prefer to keep it as is: https://datatracker.ietf.org/doc/html/rfc9000#section-19.4\r\n\r\n```suggestion\r\nStream ID:  A variable-length integer encoding of the stream ID of\r\n```",
+              "createdAt": "2022-09-10T06:21:09Z",
+              "updatedAt": "2022-09-10T06:21:59Z"
+            },
+            {
+              "originalPosition": 26,
+              "body": "```suggestion\r\nApplication Protocol Error Code:  A variable-length integer\r\n```",
+              "createdAt": "2022-09-10T06:21:19Z",
+              "updatedAt": "2022-09-10T06:21:59Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "```suggestion\r\nFinal Size:  A variable-length integer indicating the final size of\r\n```",
+              "createdAt": "2022-09-10T06:21:27Z",
+              "updatedAt": "2022-09-10T06:21:59Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "```suggestion\r\nReliable Size:  A variable-length integer indicating the amount of\r\n```",
+              "createdAt": "2022-09-10T06:21:37Z",
+              "updatedAt": "2022-09-10T06:21:59Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHuKM_s5Bv7Wy",
+          "commit": {
+            "abbreviatedOid": "d6597d5"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-09-10T06:22:40Z",
+          "updatedAt": "2022-09-10T06:22:40Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOHuKM_s5KyD2p",
+      "title": "Allow application to specify the metadata transmitted with the stream reset",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/2",
+      "state": "CLOSED",
+      "author": "vasilvv",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, the draft only allows the data in the beginning of the stream to be made reliable.  This PR instead proposes to let application specify what metadata is being carried with the reset.  This has the drawback of limiting the amount of reset-attached metadata we can transmit to ~1200 bytes, but it also allows us to address issue\r\nietf-wg-webtrans/draft-ietf-webtrans-http3#90, and since the only things we currently need to be reliable are the session ID and the error code, this should not be the problem.",
+      "createdAt": "2023-02-26T23:21:44Z",
+      "updatedAt": "2023-04-06T19:22:50Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "59000d0137fbd12f5c1d37ec947741247fd2d97b",
+      "headRepository": "vasilvv/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "reset-payload",
+      "headRefOid": "cb256abf4217d6b1f382f3622f0616166330c7d8",
+      "closedAt": "2023-04-06T19:22:49Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "body": "IIUC, the approach being proposed in this PR is to extend the amount of information that can be sent with a stream reset (QUIC v1 can only send 16-bit of information).\r\n\r\nIMO the primary benefit of the proposed approach is that the changes to the QUIC stacks are smaller. The downside is, in addition to the limit on the amount of data that can be sent, that it requires more code in the applications.\r\n\r\nThe sending application would be required to have the mechanism of transmitting the same thing in two ways. The receiving application would be required to have the mechanism of receiving the same thing in two ways, and additionally may be required to compare if the information received over the two channels are identical.\r\n\r\nConsidering the trade off (of where the complexity) would be, my preference goes to addressing the problem in the QUIC stacks, because then the complexity on every application protocol can be reduced (that needs these mechanism).\r\n\r\nAs pointed out in https://mailarchive.ietf.org/arch/msg/quic/oqAG6yeKB_KNgwDS5iPMVmCu8Qw/, I think that this kind of mechanism is a nice have not only in WebTransport.",
+          "createdAt": "2023-02-27T03:31:43Z",
+          "updatedAt": "2023-02-27T03:31:43Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "body": "> IMO the primary benefit of the proposed approach is that the changes to the QUIC stacks are smaller.\r\n\r\nAnother important advantage is that the application protocol can select what data it sends (e.g. we can add a custom error code for WebTransport applications, which is something we cannot do now).  So it's more flexibility.\r\n\r\n> The downside is, in addition to the limit on the amount of data that can be sent, that it requires more code in the applications.\r\n\r\nIt depends on the application API of the QUIC stack in question.  It is entirely plausible that \"you can read from the stream even if we received a reset\" is an operation that is not trivial to support (e.g. you designed your API with the assumption that all reads fail after you receive reset).",
+          "createdAt": "2023-02-27T16:26:02Z",
+          "updatedAt": "2023-02-27T16:26:02Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you for the PR, @vasilvv! I can see how this simplifies the changes to the QUIC state machine, and I assume that this is the main motivation behind this (class of) proposals.\r\n\r\nA nice property of the original proposal is that it effortlessly covers the recursive use case: An application running on top of WebTransport might also need to set some kind of stream identifier which needs to be transmitted reliable, and an application running on top of that one...\r\nNow this isn't impossible to achieve with this change, but it requires a lot of special casing in all protocol definitions (\"WebTransport parses the Session ID from the RESET_STREAM_WITH_PAYLOAD, and passes the remainder of the payload up to the application\"). Ultimately, all this special logic is duplicated, since your stack already handles parsing of these identifiers in the happy path (the non-reset path).",
+          "createdAt": "2023-02-27T20:44:28Z",
+          "updatedAt": "2023-02-27T20:44:28Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "body": "Closing this per discussion at the QUIC WG meeting in Yokohama.",
+          "createdAt": "2023-04-06T19:22:49Z",
+          "updatedAt": "2023-04-06T19:22:49Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOHuKM_s5M5s1Z",
+      "title": "Allow QUIC stacks surface reset signal before receiving all data",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/3",
+      "state": "MERGED",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "In QUIC v1, we do not require QUIC stacks to refrain from surfacing the fact that a FIN has been received until all data is received.\r\n\r\nI think we should follow that convention (of leaving it to each stack when to surface such signal).",
+      "createdAt": "2023-03-26T01:13:33Z",
+      "updatedAt": "2023-03-26T01:36:19Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "5c080b6dcb4533e14f600d151a6c5de05e06ba1b",
+      "headRepository": "kazuho/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "kazuho/surfacing-order",
+      "headRefOid": "09ef654fee4a9d9c9d88fdb384271544202263a7",
+      "closedAt": "2023-03-26T01:36:19Z",
+      "mergedAt": "2023-03-26T01:36:19Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "b2b353ff57ebedc43acfabdbb7db84c03bab3d0a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5Q8EVM",
+          "commit": {
+            "abbreviatedOid": "09ef654"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "I like it. This part of the API contract, and nothing we should specify. You're right that it's totally valid to signal to the application \"the stream was reset, but by the way, there might some more data coming\".",
+          "createdAt": "2023-03-26T01:16:54Z",
+          "updatedAt": "2023-03-26T01:16:54Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOHuKM_s5M5tbq",
+      "title": "talk about the relay use-case",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/4",
+      "state": "MERGED",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed on the mailing list, reliable reset is useful for forwarders that want to not lose the bytes being forwarded while using a reset to signal that an error has occurred.",
+      "createdAt": "2023-03-26T01:28:50Z",
+      "updatedAt": "2023-03-26T02:50:43Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "5c080b6dcb4533e14f600d151a6c5de05e06ba1b",
+      "headRepository": "kazuho/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "kazuho/forwarder-use-case",
+      "headRefOid": "975090fec61e28b4c755d8df5978653c857aa0ca",
+      "closedAt": "2023-03-26T02:50:43Z",
+      "mergedAt": "2023-03-26T02:50:43Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "33f3c907782f9b58ee9ddb27d647a7537c596b28"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5Q8FWZ",
+          "commit": {
+            "abbreviatedOid": "20d73e5"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-03-26T02:13:47Z",
+          "updatedAt": "2023-03-26T02:15:16Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\nAnother use-case is relaying data from an external data source. When a relay\r\n```",
+              "createdAt": "2023-03-26T02:13:47Z",
+              "updatedAt": "2023-03-26T02:15:16Z"
+            },
+            {
+              "originalPosition": 16,
+              "body": "```suggestion\r\nsure that all data being read previously is delivered to the peer.\r\n```",
+              "createdAt": "2023-03-26T02:14:06Z",
+              "updatedAt": "2023-03-26T02:15:16Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOHuKM_s5M5wKb",
+      "title": "no more reduction of Reliable Size",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/5",
+      "state": "OPEN",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "Considering that RELIABLE_RESET_STREAM with a Reliable Size of 0 is equivalent to an ordinary RESET_STREAM, I get the temptation to unify the semantics of the two frames. I also agree that if we are to unify them, the correct way is to allow reduction of Reliable Size down to zero, as currently specified.\r\n\r\nHowever, I am not sure if there is an actual use case for reducing Reliable Size to a non-zero value. Once the sender thinks that data up to offset X have to be delivered, it is unlikely that the requirement changes in the future.\r\n\r\nConsidering that, I would propose to disallow eventual reduction of Reliable Size.\r\n\r\nInstead, we'd require all RELIABLE_RESET_STREAM frames sent for a particular stream to carry the same Reliable Size, while allowing senders to send a RESET_STREAM frame for a stream on which the sender has already sent a RELIABLE_RESET_STREAM frame.\r\n\r\nThis change simplifies the draft and also the implementation slightly. Comparing values is simpler than comparing values to choose a minimum.",
+      "createdAt": "2023-03-26T02:44:57Z",
+      "updatedAt": "2023-07-27T16:11:36Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "main",
+      "baseRefOid": "979d217b56501074b5de0ba25a4b1d94857a8eac",
+      "headRepository": "kazuho/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "kazuho/no-reduce",
+      "headRefOid": "dbe94eaab4ca8ebc0a9f0847a13d8f8cce69b5d6",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Arguably, sending a RESET_STREAM frame after a RELIABLE_RESET_STREAM frame is effectively a reduction of the Reliable Size (to 0).",
+          "createdAt": "2023-03-26T05:07:57Z",
+          "updatedAt": "2023-03-26T05:07:57Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOHuKM_s5NOPkD",
+      "title": "add kazuho",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/7",
+      "state": "MERGED",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "Includes non-ASCII form of my name, I think it'd work as I just copied it from RFC 9218.",
+      "createdAt": "2023-03-30T04:02:04Z",
+      "updatedAt": "2023-03-30T04:06:40Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "33f3c907782f9b58ee9ddb27d647a7537c596b28",
+      "headRepository": "kazuho/draft-seemann-quic-reliable-stream-reset",
+      "headRefName": "kazuho/add-kazuho",
+      "headRefOid": "b98193dc55d85d82295465d57f609544c008c845",
+      "closedAt": "2023-03-30T04:06:40Z",
+      "mergedAt": "2023-03-30T04:06:40Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "8f202880343b2d25a1fb507d303de4613fb817b4"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5RUW4T",
+          "commit": {
+            "abbreviatedOid": "b98193d"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-03-30T04:06:16Z",
+          "updatedAt": "2023-03-30T04:06:20Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I trust that this is the correct way to specify non-ASCII names.",
+              "createdAt": "2023-03-30T04:06:16Z",
+              "updatedAt": "2023-03-30T04:06:20Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOHuKM_s5PCeDr",
+      "title": "Update README links",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/8",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-04-24T20:02:28Z",
+      "updatedAt": "2023-04-24T20:24:07Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "979d217b56501074b5de0ba25a4b1d94857a8eac",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "update-readme-links",
+      "headRefOid": "e117325edfa515e91101f4a518db00120d0be31d",
+      "closedAt": "2023-04-24T20:24:07Z",
+      "mergedAt": "2023-04-24T20:24:07Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "3910e9b7d61d6d83bb011e4623648a9c815e56bc"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5TXxNP",
+          "commit": {
+            "abbreviatedOid": "e117325"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-04-24T20:23:58Z",
+          "updatedAt": "2023-04-24T20:23:58Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOHuKM_s5PDlEB",
+      "title": "more adjustments to readme",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/9",
+      "state": "OPEN",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "Adjustments to links and their labels following WG adoption.\r\n\r\nChange to the first sentence follows that of https://github.com/quicwg/load-balancers.",
+      "createdAt": "2023-04-25T01:11:16Z",
+      "updatedAt": "2023-07-27T16:11:36Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "main",
+      "baseRefOid": "3910e9b7d61d6d83bb011e4623648a9c815e56bc",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "kazuho-patch-1",
+      "headRefOid": "1104a3d22154694b7e7e33265df9c54fce2cb222",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOHuKM_s5QzofX",
+      "title": "rename to CLOSE_STREAM, make error code optional",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/11",
+      "state": "MERGED",
+      "author": "marten-seemann",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "First stab at renaming to CLOSE_STREAM. I'm pretty sure this requires more cleanup.\r\nIntroducing a variant without an error code creates a lot of complication, since this is now an alternative to a STREAM frame with a FIN bit.",
+      "createdAt": "2023-05-18T13:22:27Z",
+      "updatedAt": "2023-06-22T00:24:07Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "91187fd6b62e1d976ee0dae47a9fddaf4659a4d2",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "close-stream",
+      "headRefOid": "19882b24bcc99809e6bb5e5a30ba1c4f3df006cb",
+      "closedAt": "2023-06-13T09:36:31Z",
+      "mergedAt": "2023-06-13T09:36:31Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "ee27bf7ee39ec80d65e588d55e655e6576b35db8"
+      },
+      "comments": [
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you @kazuho!",
+          "createdAt": "2023-06-13T09:33:49Z",
+          "updatedAt": "2023-06-13T09:33:49Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5W0QBW",
+          "commit": {
+            "abbreviatedOid": "af38608"
+          },
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "@marten-seemann Thank you for your efforts. Looks good modulo the points below.",
+          "createdAt": "2023-06-02T01:52:04Z",
+          "updatedAt": "2023-06-02T01:59:41Z",
+          "comments": [
+            {
+              "originalPosition": 77,
+              "body": "How about talking about acknowledgement and terminal states?\r\n\r\n```suggestion\r\nunless the stream state has transitioned to \"Data Recvd\" or \"Reset Recvd\" due\r\nto transmission and acknowledgement of other frames (see {{multiple-frames}}).\r\n```\r\n\r\nIMO, current text is a bit ambiguous in situations like when you send STREAM + FIN, then CLOSE_STREAM, after which you receive an ACK for STREAM + FIN. In such case, acknowledgment of STREAM + FIN changes the stream state to \"Data Recvd\" at which point the sender learns that retransmission of CLOSE_STREAM is unnecessary.",
+              "createdAt": "2023-06-02T01:52:04Z",
+              "updatedAt": "2023-06-02T01:59:41Z"
+            },
+            {
+              "originalPosition": 104,
+              "body": "```suggestion\r\nWhen using the CLOSE_STREAM frame, the initiator MUST guarantee reliable delivery of stream data of at least\r\n```",
+              "createdAt": "2023-06-02T01:53:33Z",
+              "updatedAt": "2023-06-02T01:59:41Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHuKM_s5Y79vI",
+          "commit": {
+            "abbreviatedOid": "19882b2"
+          },
+          "author": "martinthomson",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "I don't think I'm convinced that this is a good direction just yet.",
+          "createdAt": "2023-06-22T00:21:17Z",
+          "updatedAt": "2023-06-22T00:24:07Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "I would prefer if this were unconditional.  A value of 0 (or whatever application error equates to no error) is fine.\r\n\r\nI see why you made this choice, but if the goal is to send STREAM+FIN, then STREAM+FIN exists.  This frame only makes sense if reliable size < final size.",
+              "createdAt": "2023-06-22T00:21:17Z",
+              "updatedAt": "2023-06-22T00:24:07Z"
+            },
+            {
+              "originalPosition": 87,
+              "body": "choice",
+              "createdAt": "2023-06-22T00:21:30Z",
+              "updatedAt": "2023-06-22T00:24:07Z"
+            },
+            {
+              "originalPosition": 93,
+              "body": "`{{Section 13.3 of !RFC9000}}`",
+              "createdAt": "2023-06-22T00:21:54Z",
+              "updatedAt": "2023-06-22T00:24:07Z"
+            },
+            {
+              "originalPosition": 102,
+              "body": "Lose the parentheses.",
+              "createdAt": "2023-06-22T00:22:12Z",
+              "updatedAt": "2023-06-22T00:24:07Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDOHuKM_s5Q0IuE",
+      "title": "Fix the solidarity bot",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/12",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-05-18T14:52:53Z",
+      "updatedAt": "2023-05-18T14:55:12Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "3910e9b7d61d6d83bb011e4623648a9c815e56bc",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "fix-solidarity-bot",
+      "headRefOid": "4b759e06186f2b65357c7669c26fb7d30680d83f",
+      "closedAt": "2023-05-18T14:55:09Z",
+      "mergedAt": "2023-05-18T14:55:09Z",
+      "mergedBy": "LPardue",
+      "mergeCommit": {
+        "oid": "4e506df55b3bd1930c762680ed8694b941e87307"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 13,
+      "id": "PR_kwDOHuKM_s5Q0NYs",
+      "title": "Automatic update of .github/CODEOWNERS",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/13",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-05-18T15:06:03Z",
+      "updatedAt": "2023-05-18T17:55:03Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "4e506df55b3bd1930c762680ed8694b941e87307",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "test",
+      "headRefOid": "5b17a6fbb4d7f8c1771290e7b991804a233a9f47",
+      "closedAt": "2023-05-18T17:55:03Z",
+      "mergedAt": "2023-05-18T17:55:03Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "91187fd6b62e1d976ee0dae47a9fddaf4659a4d2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5VbIvM",
+          "commit": {
+            "abbreviatedOid": "5b17a6f"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-05-18T17:54:58Z",
+          "updatedAt": "2023-05-18T17:54:58Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "PR_kwDOHuKM_s5V6p6h",
+      "title": "require the server to save the transport parameter as well",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/14",
+      "state": "MERGED",
+      "author": "marten-seemann",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The server needs to remember the transport parameter as well, otherwise it won't be able to tell if the extension is in use when resuming a 0-RTT connection. It also wouldn't be able to reject 0-RTT if it doesn't enable the extension any more.",
+      "createdAt": "2023-07-19T17:33:33Z",
+      "updatedAt": "2023-07-21T17:19:09Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "ee27bf7ee39ec80d65e588d55e655e6576b35db8",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "remember-tp-server-side",
+      "headRefOid": "93a8a71627d1eedfedeb563347a5f75189cd566e",
+      "closedAt": "2023-07-21T17:19:09Z",
+      "mergedAt": "2023-07-21T17:19:09Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "37e8ff65546790dabdc2179098fd5b2fdcb37361"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5bris1",
+          "commit": {
+            "abbreviatedOid": "9c9b3ec"
+          },
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "Glad you found this. Looks good, my comment below are purely editorial.",
+          "createdAt": "2023-07-19T22:32:01Z",
+          "updatedAt": "2023-07-19T22:36:27Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "```suggestion\r\naccepted by the server, the server MUST NOT disable this extension on the\r\n```\r\nI know this is from old text, but \"MUST not\" sounds odd. Maybe it is better to use either \"MUST NOT disable\" or \"MUST enable.\"",
+              "createdAt": "2023-07-19T22:32:02Z",
+              "updatedAt": "2023-07-19T22:36:27Z"
+            },
+            {
+              "originalPosition": 9,
+              "body": "Take it or leave it, but we use \"endpoints\" right above, so it should be safe to reuse the term.\r\n```suggestion\r\nIn order to allow reliable stream resets in 0-RTT packets, both endpoints MUST\r\nremember the value of this transport parameter.  If 0-RTT data is\r\n```",
+              "createdAt": "2023-07-19T22:35:36Z",
+              "updatedAt": "2023-07-19T22:36:27Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOHuKM_s5b4djQ",
+          "commit": {
+            "abbreviatedOid": "9c9b3ec"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-07-21T17:08:59Z",
+          "updatedAt": "2023-07-21T17:08:59Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "I agree. \"MUST not\" doesn't make sense.",
+              "createdAt": "2023-07-21T17:08:59Z",
+              "updatedAt": "2023-07-21T17:08:59Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "PR_kwDOHuKM_s5WEfqO",
+      "title": "[editorial] Fix typos",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/15",
+      "state": "MERGED",
+      "author": "bashi",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-07-21T07:06:39Z",
+      "updatedAt": "2023-07-21T17:09:43Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "ee27bf7ee39ec80d65e588d55e655e6576b35db8",
+      "headRepository": "bashi/reliable-stream-reset",
+      "headRefName": "fix-typo",
+      "headRefOid": "e391c5deefa281b7370e38187186051d0582ebad",
+      "closedAt": "2023-07-21T17:09:42Z",
+      "mergedAt": "2023-07-21T17:09:42Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "eaa15703bac898f0be8cd0f6b09926212efac069"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5b4dO5",
+          "commit": {
+            "abbreviatedOid": "e391c5d"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-07-21T17:07:56Z",
+          "updatedAt": "2023-07-21T17:07:56Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "PR_kwDOHuKM_s5WJLKh",
+      "title": "Update IANA Considerations section",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/16",
+      "state": "MERGED",
+      "author": "bashi",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This document introduces a new QUIC transport parameter and it should be mentioned in IANA Considerations section.",
+      "createdAt": "2023-07-22T07:57:18Z",
+      "updatedAt": "2023-07-30T21:31:31Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "main",
+      "baseRefOid": "37e8ff65546790dabdc2179098fd5b2fdcb37361",
+      "headRepository": "bashi/reliable-stream-reset",
+      "headRefName": "iana-considerations",
+      "headRefOid": "534335831e71881cc42c30a81aac853ed68597eb",
+      "closedAt": "2023-07-30T21:31:31Z",
+      "mergedAt": "2023-07-30T21:31:31Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "863cac518b4e5e4513159daefd7dd592b9a71d35"
+      },
+      "comments": [
+        {
+          "author": "bashi",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> Do we need to do the same for the frame types defined here? They also need to be added to an IANA registry.\r\n\r\nGood point. Added.",
+          "createdAt": "2023-07-23T00:06:17Z",
+          "updatedAt": "2023-07-23T00:06:17Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5b6ycX",
+          "commit": {
+            "abbreviatedOid": "d6cdf56"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Do we need to do the same for the frame types defined here? They also need to be added to an IANA registry.",
+          "createdAt": "2023-07-22T19:57:01Z",
+          "updatedAt": "2023-07-22T19:57:01Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHuKM_s5cm7fZ",
+          "commit": {
+            "abbreviatedOid": "5343358"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-07-30T21:31:17Z",
+          "updatedAt": "2023-07-30T21:31:17Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "PR_kwDOHuKM_s5WJyhk",
+      "title": "don't cite RFCs in the abstract",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/17",
+      "state": "MERGED",
+      "author": "marten-seemann",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As @martinthomson pointed out on one of my other drafts, the abstract shouldn't contain any citations.",
+      "createdAt": "2023-07-22T19:56:21Z",
+      "updatedAt": "2023-07-22T20:26:03Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "37e8ff65546790dabdc2179098fd5b2fdcb37361",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "abstract-no-citations",
+      "headRefOid": "c18b70ca63a9d48a9ea366b0788234231680954a",
+      "closedAt": "2023-07-22T20:26:03Z",
+      "mergedAt": "2023-07-22T20:26:02Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "4fab2a7740180a790ae4caba5f2a00a34d6e91ef"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5b6y-l",
+          "commit": {
+            "abbreviatedOid": "c18b70c"
+          },
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-07-22T20:25:30Z",
+          "updatedAt": "2023-07-22T20:25:30Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "id": "PR_kwDOHuKM_s5WJ0AH",
+      "title": "s/v1/version 1/",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/18",
+      "state": "MERGED",
+      "author": "kazuho",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-07-22T20:27:57Z",
+      "updatedAt": "2023-07-22T20:30:58Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "4fab2a7740180a790ae4caba5f2a00a34d6e91ef",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "kazuho-patch-2",
+      "headRefOid": "f26af7d4ed243f5c5383a0f0916b78c22afd20ec",
+      "closedAt": "2023-07-22T20:30:58Z",
+      "mergedAt": "2023-07-22T20:30:58Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "4cb2f58c14785b01ae0a7f7d83347d9cd19d4b40"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5b6zFG",
+          "commit": {
+            "abbreviatedOid": "f26af7d"
+          },
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-07-22T20:30:53Z",
+          "updatedAt": "2023-07-22T20:30:53Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOHuKM_s5Wfbzy",
+      "title": "Automatic update of venue information",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/21",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "MEMBER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-07-26T23:06:46Z",
+      "updatedAt": "2023-07-26T23:21:08Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "master",
+      "baseRefOid": "4cb2f58c14785b01ae0a7f7d83347d9cd19d4b40",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "venue",
+      "headRefOid": "c110fd74282f6787ea746215cdae494feae249f3",
+      "closedAt": "2023-07-26T23:21:01Z",
+      "mergedAt": "2023-07-26T23:21:01Z",
+      "mergedBy": "LPardue",
+      "mergeCommit": {
+        "oid": "24c1c37ec92bee1fbba76610b0250712aa9116a2"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOHuKM_s5Xwj7v",
+      "title": "remove errorless variant of the frame",
+      "url": "https://github.com/quicwg/reliable-stream-reset/pull/22",
+      "state": "MERGED",
+      "author": "marten-seemann",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Please review carefully to make sure I removed all mentions of the two frame types.",
+      "createdAt": "2023-08-11T21:02:42Z",
+      "updatedAt": "2023-08-13T09:04:43Z",
+      "baseRepository": "quicwg/reliable-stream-reset",
+      "baseRefName": "main",
+      "baseRefOid": "863cac518b4e5e4513159daefd7dd592b9a71d35",
+      "headRepository": "quicwg/reliable-stream-reset",
+      "headRefName": "remove-errorless-frame-variant",
+      "headRefOid": "08be42ab731c7ad7f600a2aec284e06f3ac14616",
+      "closedAt": "2023-08-13T09:04:42Z",
+      "mergedAt": "2023-08-13T09:04:42Z",
+      "mergedBy": "marten-seemann",
+      "mergeCommit": {
+        "oid": "d56b881bbdbb045557c88a056a307226d64ddbdd"
+      },
+      "comments": [
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thank you! Fixed it.",
+          "createdAt": "2023-08-13T08:39:06Z",
+          "updatedAt": "2023-08-13T08:39:06Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOHuKM_s5d68LT",
+          "commit": {
+            "abbreviatedOid": "b0b5ca4"
+          },
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "Thank you for the PR.\r\n\r\nAside from the name of the frame becoming odd, I see two more parts that we might want to change.\r\n\r\n1. In abstract, we state \"allows closing and resetting of a stream.\" Now that we concentrate on extending stream resets, should we drop \"closing and\"?\r\n2. There is a section named \"Closing Streams.\" Should it be \"Resetting Streams\" for the same reason?",
+          "createdAt": "2023-08-13T08:29:31Z",
+          "updatedAt": "2023-08-13T08:29:31Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOHuKM_s5d69TB",
+          "commit": {
+            "abbreviatedOid": "08be42a"
+          },
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "LG! Thank you for the changes.",
+          "createdAt": "2023-08-13T08:42:01Z",
+          "updatedAt": "2023-08-13T08:42:01Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
+}
