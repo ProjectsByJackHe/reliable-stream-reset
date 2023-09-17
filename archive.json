@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-09-10T00:47:48.236970+00:00",
+  "timestamp": "2023-09-17T00:48:03.810824+00:00",
   "repo": "quicwg/reliable-stream-reset",
   "labels": [
     {
@@ -148,9 +148,17 @@
       "labels": [],
       "body": "Hi! \r\n\r\nI was implementing RFC: https://datatracker.ietf.org/doc/draft-ietf-quic-reliable-stream-reset/ \r\nand had a few thoughts regarding support for the SENDER sending multiple CLOSE_STREAM frames to reduce ReliableSize. \r\n\r\nPerhaps the RFC could specify details related to ACK state tracking to help implementors? \r\n\r\nFor instance, if a sender sends 100 CLOSE_STREAM frames with monotonically decreasing ReliableSize, how do we ensure that the receiver is synchronized with the minimum value of ReliableSize before the sender can close its stream?\r\n\r\nThere were 2 approaches I was considering:\r\n\r\n1) Wait until all the CLOSE_STREAM frames get ACK'd, and then we can be sure the Receiver will have the minimum ReliableSize. \r\n\r\n2) Sender tracks all the CLOSE_STREAM frames sent via metadata, and when processing a CLOSE_STREAM ACK, the sender can check whether the metadata is the minimum ( == current ReliableSize state). \r\n\r\nI feel approach 2) is the most optimal as we can get lucky and the receiver can ACK the minimum CLOSE_STREAM frame first. \r\nPerhaps the RFC could go into more detail here?",
       "createdAt": "2023-09-08T20:30:17Z",
-      "updatedAt": "2023-09-08T20:30:17Z",
+      "updatedAt": "2023-09-15T07:03:21Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As with all QUIC frames, it's not frames that are retransmitted. Therefore, there's no need to retransmit CLOSE_STREAM frames with a higher stream offset (though it's not invalid).",
+          "createdAt": "2023-09-15T07:03:20Z",
+          "updatedAt": "2023-09-15T07:03:20Z"
+        }
+      ]
     }
   ],
   "pulls": [
